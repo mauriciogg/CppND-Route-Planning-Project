@@ -6,7 +6,6 @@
 #include <string>
 #include "route_model.h"
 
-
 class RoutePlanner {
   public:
     RoutePlanner(RouteModel &model, float start_x, float start_y, float end_x, float end_y);
@@ -28,6 +27,19 @@ class RoutePlanner {
 
     float distance = 0.0f;
     RouteModel &m_Model;
+
+    // Helper functions to operate on open_list as heap.
+    void PushToOpen(RouteModel::Node *node);
+    RouteModel::Node* PopFromOpen();
+
+    struct NodeCompare {
+      bool operator()(RouteModel::Node* a, RouteModel::Node* b) const {
+        // Sort in reversed order since we want highest f-value (h + g) at the back
+        return (a->g_value + a->h_value) >= (b->g_value + b->h_value);
+      }
+    };
+
+    NodeCompare cmp;
 };
 
 #endif
